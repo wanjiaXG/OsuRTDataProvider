@@ -1,10 +1,10 @@
-﻿using OsuRTDataProvider.Listen;
+﻿using OsuRTDataProviderLibrary.Listen;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static OsuRTDataProvider.Listen.OsuListenerManager;
+using static OsuRTDataProviderLibrary.Listen.OsuListenerManager;
 
-namespace OsuRTDataProvider.Memory
+namespace OsuRTDataProviderLibrary.Memory
 {
 
     internal class OsuHitEventFinder : OsuFinderBase
@@ -175,7 +175,7 @@ namespace OsuRTDataProvider.Memory
                         continue;
                     }
 
-                    LogHelper.LogToFile($"Hit Event ({name}) Base Address: 0x{(int)Addresses[0]:X8} by pattern #{i}");
+                    Console.WriteLine($"Hit Event ({name}) Base Address: 0x{(int)Addresses[0]:X8} by pattern #{i}");
                     break;
                 }
             }
@@ -201,7 +201,7 @@ namespace OsuRTDataProvider.Memory
                     }
                     Addresses[depth + 1] = Addresses[depth + 1] + offset;
 
-                    //LogHelper.LogToFile($"Hit Event Base Address({depth + 1}): 0x{(int)Addresses[depth + 1]:X8}");
+                    //Console.WriteLine($"Hit Event Base Address({depth + 1}): 0x{(int)Addresses[depth + 1]:X8}");
                 }
             }
 
@@ -245,14 +245,14 @@ namespace OsuRTDataProvider.Memory
                 }
                 CurrentEvents.Add(hitEvent);
                 increment = increment + 1;
-                //LogHelper.LogToFile($"{increment}");
+                //Console.WriteLine($"{increment}");
             }
 
             sw.Stop();
             long time = sw.ElapsedMilliseconds;
             if (increment != 0)
             {
-                LogHelper.LogToFile($"Sync hit events: count = {increment}, time = {time}ms, speed = {(time != 0 ? (increment / (double)time) : -1)}/ms");
+                Console.WriteLine($"Sync hit events: count = {increment}, time = {time}ms, speed = {(time != 0 ? (increment / (double)time) : -1)}/ms");
             }
 
             return increment != 0;

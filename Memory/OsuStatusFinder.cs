@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace OsuRTDataProvider.Memory
+namespace OsuRTDataProviderLibrary.Memory
 {
     internal class OsuStatusFinder : OsuFinderBase
     {
@@ -22,10 +22,10 @@ namespace OsuRTDataProvider.Memory
             {
                 //Find Game Modes
                 m_game_modes_address = SigScan.FindPattern(StringToByte(s_game_modes_pattern), s_game_modes_mask, 11);
-                LogHelper.LogToFile($"Game Status Address (0):0x{(int)m_game_modes_address:X8}");
+                Console.WriteLine($"Game Status Address (0):0x{(int)m_game_modes_address:X8}");
 
                 success = TryReadIntPtrFromMemory(m_game_modes_address, out m_game_modes_address);
-                LogHelper.LogToFile($"Game Status Address (1):0x{(int)m_game_modes_address:X8}");
+                Console.WriteLine($"Game Status Address (1):0x{(int)m_game_modes_address:X8}");
             }
             SigScan.ResetRegion();
 

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace OsuRTDataProvider.Helper
+namespace OsuRTDataProviderLibrary.Helper
 {
     internal static class PathHelper
     {

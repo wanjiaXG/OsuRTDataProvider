@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OsuRTDataProvider.Mods
+namespace OsuRTDataProviderLibrary.Mods
 {
     public struct ModsInfo
     {

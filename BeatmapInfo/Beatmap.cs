@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace OsuRTDataProvider.BeatmapInfo
+namespace OsuRTDataProviderLibrary.BeatmapInfo
 {
     public class Beatmap
     {

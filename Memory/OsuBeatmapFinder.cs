@@ -1,12 +1,12 @@
-﻿using OsuRTDataProvider.BeatmapInfo;
-using OsuRTDataProvider.Listen;
+﻿using OsuRTDataProviderLibrary.BeatmapInfo;
+using OsuRTDataProviderLibrary.Listen;
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace OsuRTDataProvider.Memory
+namespace OsuRTDataProviderLibrary.Memory
 {
     internal class OsuBeatmapFinder : OsuFinderBase
     {
@@ -66,10 +66,10 @@ namespace OsuRTDataProvider.Memory
             {
                 //Find Beatmap ID Address
                 m_beatmap_address = SigScan.FindPattern(StringToByte(s_beatmap_pattern), s_beatmap_mask, 4);
-                LogHelper.LogToFile($"Beatmap Base Address (0):0x{(int)m_beatmap_address:X8}");
+                Console.WriteLine($"Beatmap Base Address (0):0x{(int)m_beatmap_address:X8}");
 
                 success = TryReadIntPtrFromMemory(m_beatmap_address, out m_beatmap_address);
-                LogHelper.LogToFile($"Beatmap Base Address (1):0x{(int)m_beatmap_address:X8}");
+                Console.WriteLine($"Beatmap Base Address (1):0x{(int)m_beatmap_address:X8}");
             }
             SigScan.ResetRegion();
 

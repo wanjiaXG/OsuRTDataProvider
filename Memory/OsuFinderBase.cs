@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace OsuRTDataProvider.Memory
+namespace OsuRTDataProviderLibrary.Memory
 {
     internal abstract class OsuFinderBase
     {
@@ -47,10 +47,9 @@ namespace OsuRTDataProvider.Memory
 
         protected bool TryReadIntPtrFromMemory(IntPtr address, out IntPtr value)
         {
-            int ret_size_ptr = 0;
             value = IntPtr.Zero;
 
-            if (SigScan.ReadProcessMemory(OsuProcess.Handle, address, _number_buf, sizeof(int), out ret_size_ptr))
+            if (SigScan.ReadProcessMemory(OsuProcess.Handle, address, _number_buf, sizeof(int), out int ret_size_ptr))
             {
                 value = (IntPtr)BitConverter.ToInt32(_number_buf, 0);
                 return true;

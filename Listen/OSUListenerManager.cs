@@ -1,7 +1,7 @@
-﻿using OsuRTDataProvider.BeatmapInfo;
-using OsuRTDataProvider.Helper;
-using OsuRTDataProvider.Memory;
-using OsuRTDataProvider.Mods;
+﻿using OsuRTDataProviderLibrary.BeatmapInfo;
+using OsuRTDataProviderLibrary.Helper;
+using OsuRTDataProviderLibrary.Memory;
+using OsuRTDataProviderLibrary.Mods;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OsuRTDataProvider.Listen
+namespace OsuRTDataProviderLibrary.Listen
 {
     public class OsuListenerManager
     {

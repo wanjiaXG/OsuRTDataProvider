@@ -7,8 +7,8 @@
     <ProjectGuid>{D518DC59-CC9A-4886-839F-7691D5EFAE56}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OsuRTDataProvider</RootNamespace>
-    <AssemblyName>OsuRTDataProvider</AssemblyName>
+    <RootNamespace>OsuRTDataProviderLibrary</RootNamespace>
+    <AssemblyName>OsuRTDataProviderLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -90,7 +90,6 @@
     <Compile Include="Listen\ProvideData.cs" />
     <Compile Include="Listen\PlayMode.cs" />
     <Compile Include="Memory\OsuHitEventFinder.cs" />
-    <Compile Include="Memory\LogHelper.cs" />
     <Compile Include="Memory\OsuBeatmapFinder.cs" />
     <Compile Include="Memory\OsuFinderBase.cs" />
     <Compile Include="Memory\OsuInternalStatus.cs" />

@@ -1,10 +1,10 @@
-﻿using OsuRTDataProvider.BeatmapInfo;
-using OsuRTDataProvider.Mods;
+﻿using OsuRTDataProviderLibrary.BeatmapInfo;
+using OsuRTDataProviderLibrary.Mods;
 using System;
 using System.Collections.Generic;
-using static OsuRTDataProvider.Listen.OsuListenerManager;
+using static OsuRTDataProviderLibrary.Listen.OsuListenerManager;
 
-namespace OsuRTDataProvider.Listen
+namespace OsuRTDataProviderLibrary.Listen
 {
     [Flags]
     public enum ProvideDataMask : uint

@@ -1,9 +1,9 @@
-using OsuRTDataProvider.Listen;
-using OsuRTDataProvider.Mods;
+using OsuRTDataProviderLibrary.Listen;
+using OsuRTDataProviderLibrary.Mods;
 using System;
 using System.Diagnostics;
 
-namespace OsuRTDataProvider.Memory
+namespace OsuRTDataProviderLibrary.Memory
 {
     internal class OsuPlayFinder : OsuFinderBase
     {
@@ -45,34 +45,34 @@ namespace OsuRTDataProvider.Memory
             {
                 //Find mods address
                 m_mods_address = SigScan.FindPattern(StringToByte(s_global_mods_pattern), s_global_mods_mask, 3);
-                LogHelper.LogToFile($"Mods Base Address (0):0x{(int)m_mods_address:X8}");
+                Console.WriteLine($"Mods Base Address (0):0x{(int)m_mods_address:X8}");
 
                 m_mods_address_success = TryReadIntPtrFromMemory(m_mods_address, out m_mods_address);
-                LogHelper.LogToFile($"Mods Base Address (1):0x{(int)m_mods_address:X8}");
+                Console.WriteLine($"Mods Base Address (1):0x{(int)m_mods_address:X8}");
 
                 //Find acc Address
                 m_acc_address = SigScan.FindPattern(StringToByte(s_acc_pattern), s_acc_mask, 1);
-                LogHelper.LogToFile($"Playing Accuracy Base Address (0):0x{(int)m_acc_address:X8}");
+                Console.WriteLine($"Playing Accuracy Base Address (0):0x{(int)m_acc_address:X8}");
 
                 m_accuracy_address_success = TryReadIntPtrFromMemory(m_acc_address, out m_acc_address);
-                LogHelper.LogToFile($"Playing Accuracy Base Address (1):0x{(int)m_acc_address:X8}");
+                Console.WriteLine($"Playing Accuracy Base Address (1):0x{(int)m_acc_address:X8}");
 
                 if (!m_accuracy_address_success)//use s_acc_pattern_fallback
                 {
-                    LogHelper.LogToFile("Use Fallback Accuracy Pattern");
+                    Console.WriteLine("Use Fallback Accuracy Pattern");
                     m_acc_address = SigScan.FindPattern(StringToByte(s_acc_pattern_fallback), s_acc_mask_fallback, 4);
-                    LogHelper.LogToFile($"Playing Accuracy Base Address (0):0x{(int)m_acc_address:X8}");
+                    Console.WriteLine($"Playing Accuracy Base Address (0):0x{(int)m_acc_address:X8}");
 
                     m_accuracy_address_success = TryReadIntPtrFromMemory(m_acc_address, out m_acc_address);
-                    LogHelper.LogToFile($"Playing Accuracy Base Address (1):0x{(int)m_acc_address:X8}");
+                    Console.WriteLine($"Playing Accuracy Base Address (1):0x{(int)m_acc_address:X8}");
                 }
 
                 //Find Time Address
                 m_time_address = SigScan.FindPattern(StringToByte(s_time_pattern), s_time_mask, 5);
-                LogHelper.LogToFile($"Time Base Address (0):0x{(int)m_time_address:X8}");
+                Console.WriteLine($"Time Base Address (0):0x{(int)m_time_address:X8}");
 
                 m_time_address_success = TryReadIntPtrFromMemory(m_time_address, out m_time_address);
-                LogHelper.LogToFile($"Time Base Address (1):0x{(int)m_time_address:X8}");
+                Console.WriteLine($"Time Base Address (1):0x{(int)m_time_address:X8}");
             }
             SigScan.ResetRegion();
 

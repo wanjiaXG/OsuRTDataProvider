@@ -1,4 +1,4 @@
-﻿namespace OsuRTDataProvider.Memory
+﻿namespace OsuRTDataProviderLibrary.Memory
 {
     internal enum OsuInternalStatus
     {

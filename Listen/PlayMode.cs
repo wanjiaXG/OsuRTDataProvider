@@ -1,4 +1,4 @@
-﻿namespace OsuRTDataProvider.Listen
+﻿namespace OsuRTDataProviderLibrary.Listen
 {
     public enum OsuPlayMode
     {

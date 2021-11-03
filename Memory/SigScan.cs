@@ -42,7 +42,7 @@ using System.Runtime.InteropServices;
 //      IntPtr pAddr = _sigScan.FindPattern(new byte[]{ 0xFF, 0xFF, 0xFF, 0xFF, 0x51, 0x55, 0xFC, 0x11 }, "xxxx?xx?", 12);
 //
 // ----------------------------------------------------------------------------------------
-namespace OsuRTDataProvider.Memory
+namespace OsuRTDataProviderLibrary.Memory
 {
     internal class SigScan
     {

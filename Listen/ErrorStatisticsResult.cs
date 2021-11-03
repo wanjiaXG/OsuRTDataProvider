@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OsuRTDataProvider.Listen
+namespace OsuRTDataProviderLibrary.Listen
 {
     public struct ErrorStatisticsResult : IEquatable<ErrorStatisticsResult>
     {
