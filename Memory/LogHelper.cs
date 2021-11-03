@@ -1,5 +1,4 @@
-﻿using Sync.Tools;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -24,7 +23,7 @@ namespace OsuRTDataProvider.Memory
             */
 
             //now is directly output to default in DebugMode
-            Logger.Debug(plainText);
+            Console.WriteLine(plainText);
         }
     }
 }

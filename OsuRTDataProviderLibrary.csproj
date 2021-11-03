@@ -83,13 +83,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BeatmapInfo\Beatmap.cs" />
-    <Compile Include="DefaultLanguage.cs" />
-    <Compile Include="Helper\HardwareInformationHelper.cs" />
-    <Compile Include="Helper\OsuStatusHelper.cs" />
     <Compile Include="Helper\PathHelper.cs" />
     <Compile Include="Listen\HitEvent.cs" />
     <Compile Include="Listen\ErrorStatisticsResult.cs" />
-    <Compile Include="Listen\OSUListenerManager.cs" />
+    <Compile Include="Listen\OsuListenerManager.cs" />
     <Compile Include="Listen\ProvideData.cs" />
     <Compile Include="Listen\PlayMode.cs" />
     <Compile Include="Memory\OsuHitEventFinder.cs" />
@@ -99,25 +96,16 @@
     <Compile Include="Memory\OsuInternalStatus.cs" />
     <Compile Include="Memory\OsuModeFinder.cs" />
     <Compile Include="Memory\OsuStatusFinder.cs" />
-    <Compile Include="OsuRTDataProviderPlugin.cs" />
     <Compile Include="Memory\SigScan.cs" />
     <Compile Include="Mods\ModsInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Memory\OsuPlayFinder.cs" />
-    <Compile Include="Setting.cs" />
-    <Compile Include="UpdateChecker.cs" />
     <Compile Include="Utils.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\osuSync\Sync\Sync.csproj">
-      <Project>{FBD514C2-2830-479E-B050-D1C383028456}</Project>
-      <Name>Sync</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /y $(TargetPath) $(SolutionDir)\Sync\bin\$(ConfigurationName)\Plugins</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

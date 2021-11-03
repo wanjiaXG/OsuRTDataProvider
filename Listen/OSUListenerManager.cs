@@ -12,7 +12,6 @@ using System.Management;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static OsuRTDataProvider.DefaultLanguage;
 
 namespace OsuRTDataProvider.Listen
 {
@@ -43,6 +42,16 @@ namespace OsuRTDataProvider.Listen
         static private List<Tuple<int, Action>> s_listen_update_list = new List<Tuple<int, Action>>();
         static private Task s_listen_task;
         static private bool s_stop_flag = false;
+
+
+        public static string OsuVersion = string.Empty;
+        public static string SongsPath = string.Empty;
+        public static string Username = string.Empty;
+        public static string GameMode = "Auto";
+
+        public const string VERSION = "1.0.0";
+        public static int ListenInterval = 100;
+        public static string ForceOsuSongsDirectory;
 
         #region Event
 
@@ -213,7 +222,6 @@ namespace OsuRTDataProvider.Listen
             s_listen_task = Task.Run(() =>
             {
                 Thread.CurrentThread.Name = "OsuRTDataProviderThread";
-                Thread.Sleep(2000);
                 while (!s_stop_flag)
                 {
                     for (int i = 0; i < s_listen_update_list.Count; i++)
@@ -222,8 +230,9 @@ namespace OsuRTDataProvider.Listen
                         action.Item2();
                     }
 
-                    Thread.Sleep(Setting.ListenInterval);
+                    Thread.Sleep(ListenInterval);
                 }
+                
             });
         }
         #endregion
@@ -286,7 +295,7 @@ namespace OsuRTDataProvider.Listen
 
             if (HasMask(mask, ProvideDataMask.Beatmap))
             {
-                if (OnBeatmapChanged == null) OnBeatmapChanged += (t) => { };
+                //if (OnBeatmapChanged == null) OnBeatmapChanged += (t) => { };
                 data.Beatmap = m_last_beatmap;
             }
 
@@ -410,14 +419,14 @@ namespace OsuRTDataProvider.Listen
                 if (finder.TryInit())
                 {
                     timer = 0;
-                    Logger.Info(string.Format(success_fmt, m_osu_id));
+                    Console.WriteLine(string.Format(success_fmt, m_osu_id));
                     return finder;
                 }
 
                 finder = null;
-                Logger.Error(string.Format(failed_fmt, m_osu_id, RETRY_INTERVAL / 1000));
+                Console.WriteLine(string.Format(failed_fmt, m_osu_id, RETRY_INTERVAL / 1000));
             }
-            timer += Setting.ListenInterval;
+            timer += ListenInterval;
             finder_timer_dict[typeof(T)] = timer;
             return finder;
         }
@@ -458,15 +467,15 @@ namespace OsuRTDataProvider.Listen
                     if (m_osu_process != null)
                     {
                         FindSongPathAndUsername();
-                        Logger.Info(string.Format(LANG_OSU_FOUND, m_osu_id));
+                        Console.WriteLine(string.Format("Found osu!.exe process", m_osu_id));
                         return;
                     }
                 }
                 find_osu_process_timer = 0;
-                if (!Setting.DisableProcessNotFoundInformation)
-                    Logger.Error(string.Format(LANG_OSU_NOT_FOUND, m_osu_id));
+                //if (!Setting.DisableProcessNotFoundInformation)
+                Console.WriteLine(string.Format("Not found osu!.exe process", m_osu_id));
             }
-            find_osu_process_timer += Setting.ListenInterval;
+            find_osu_process_timer += ListenInterval;
         }
 
         private void FindSongPathAndUsername()
@@ -479,9 +488,9 @@ namespace OsuRTDataProvider.Listen
             }
             catch (Win32Exception e)
             {
-                if(Setting.DebugMode)
-                    Logger.Warn($"Win32Exception: {e.ToString()}");
-                Logger.Warn("Can't get osu path, Retry after 2 seconds.");
+                //if(Setting.DebugMode)
+                Console.WriteLine($"Win32Exception: {e.ToString()}");
+                Console.WriteLine("Can't get osu path, Retry after 2 seconds.");
                 Thread.Sleep(2000);
                 goto find_osu_filename;
             }
@@ -500,45 +509,45 @@ namespace OsuRTDataProvider.Listen
 
                         if (line.StartsWith("BeatmapDirectory"))
                         {
-                            if (Directory.Exists(Setting.ForceOsuSongsDirectory))
+                            if (Directory.Exists(ForceOsuSongsDirectory))
                             {
-                                Setting.SongsPath = Setting.ForceOsuSongsDirectory;
+                                SongsPath = ForceOsuSongsDirectory;
                             }
                             else
                             {
-                                Logger.Info($"ForceOsuSongsDirectory: {Setting.ForceOsuSongsDirectory}");
-                                Logger.Info($"The ForceOsuSongsDirectory does not exist, try searching for the songs path.");
+                                Console.WriteLine($"ForceOsuSongsDirectory: {ForceOsuSongsDirectory}");
+                                Console.WriteLine($"The ForceOsuSongsDirectory does not exist, try searching for the songs path.");
                                 song_path = line.Split('=')[1].Trim();
                                 if (Path.IsPathRooted(song_path))
-                                    Setting.SongsPath = song_path;
+                                    SongsPath = song_path;
                                 else
-                                    Setting.SongsPath = Path.Combine(osu_path, song_path);
+                                    SongsPath = Path.Combine(osu_path, song_path);
                             }
                         }
                         else if (line.StartsWith("Username"))
                         {
-                            Setting.Username = line.Split('=')[1].Trim();
+                            Username = line.Split('=')[1].Trim();
                         }
                         else if (line.StartsWith("LastVersion")&&!line.StartsWith("LastVersionPermissionsFailed"))
                         {
-                            Setting.OsuVersion = line.Split('=')[1].Trim();
-                            Logger.Info($"OSU Client Verison:{Setting.OsuVersion} ORTDP Version:{OsuRTDataProviderPlugin.VERSION}");
+                            OsuVersion = line.Split('=')[1].Trim();
+                            Console.WriteLine($"OSU Client Verison:{OsuVersion} OsuRTDataProviderLibrary Version:{VERSION}");
                         }
                     }
                 }
             }
             catch (Exception e)
             {
-                Logger.Error($"Exception: {e.ToString()}");
+                Console.WriteLine($"Exception: {e.ToString()}");
             }
 
-            if (string.IsNullOrWhiteSpace(Setting.SongsPath))
+            if (string.IsNullOrWhiteSpace(SongsPath))
             {
-                Logger.Warn($"Search failed, use default songs path.");
-                Setting.SongsPath = Path.Combine(osu_path,"Songs");
+                Console.WriteLine($"Search failed, use default songs path.");
+                SongsPath = Path.Combine(osu_path,"Songs");
             }
-            Logger.Info($"Osu Path: {osu_path}");
-            Logger.Info($"Beatmap Path: {Setting.SongsPath}");
+            Console.WriteLine($"Osu Path: {osu_path}");
+            Console.WriteLine($"Beatmap Path: {SongsPath}");
         }
         #endregion
 
@@ -566,23 +575,23 @@ namespace OsuRTDataProvider.Listen
                 {
                     if (m_play_finder == null)
                     {
-                        m_play_finder = InitFinder<OsuPlayFinder>(LANG_INIT_PLAY_FINDER_SUCCESS, LANG_INIT_PLAY_FINDER_FAILED);
+                        m_play_finder = InitFinder<OsuPlayFinder>("Init PlayFinder Success!", "Init PlayFinder Failed!");
                     }
 
-                    if (Setting.GameMode == "Auto" && m_mode_finder == null)
+                    if (GameMode == "Auto" && m_mode_finder == null)
                     {
-                        m_mode_finder = InitFinder<OsuPlayModeFinder>(LANG_INIT_MODE_FINDER_SUCCESS, LANG_INIT_MODE_FINDER_FAILED);
+                        m_mode_finder = InitFinder<OsuPlayModeFinder>("Init ModeFinder Success!", "Init ModeFinder Failed!");
                     }
 
                     if (m_hit_event_finder == null)
                     {
-                        m_hit_event_finder = InitFinder<OsuHitEventFinder>(LANG_INIT_HIT_EVENT_SUCCESS, LANG_INIT_HIT_EVENT_FAIL);
+                        m_hit_event_finder = InitFinder<OsuHitEventFinder>("Init HitEventFinder Success!", "Init HitEventFinder Failed!");
                     }
                 }
 
                 if (m_beatmap_finder == null)
                 {
-                    m_beatmap_finder = InitFinder<OsuBeatmapFinder>(LANG_INIT_BEATMAP_FINDER_SUCCESS, LANG_INIT_BEATMAP_FINDER_FAILED);
+                    m_beatmap_finder = InitFinder<OsuBeatmapFinder>("Init BeatmapFinder Success!", "Init BeatmapFinder Failed!");
                 }
 
                 if (m_mode_finder != null)
@@ -598,9 +607,9 @@ namespace OsuRTDataProvider.Listen
                 }
                 else
                 {
-                    if (Setting.GameMode != "Auto")
+                    if (GameMode != "Auto")
                     {
-                        if (s_game_mode_map.TryGetValue(Setting.GameMode, out var mode))
+                        if (s_game_mode_map.TryGetValue(GameMode, out var mode))
                             if (m_last_mode != mode)
                                 OnPlayModeChanged?.Invoke(m_last_mode, mode);
 
@@ -621,123 +630,121 @@ namespace OsuRTDataProvider.Listen
                     }
                 }
 
-                if (m_play_finder != null)
+                Beatmap beatmap = Beatmap.Empty;
+                ModsInfo mods = ModsInfo.Empty;
+                ErrorStatisticsResult error_statistics = ErrorStatisticsResult.Empty;
+                int cb = 0;
+                int pt = 0;
+                int n300 = 0;
+                int n100 = 0;
+                int n50 = 0;
+                int ngeki = 0;
+                int nkatu = 0;
+                int nmiss = 0;
+                int score = 0;
+                double hp = 0.0;
+                double acc = 0.0;
+                string playername = Username;
+
+                try
                 {
-                    Beatmap beatmap = Beatmap.Empty;
-                    ModsInfo mods = ModsInfo.Empty;
-                    ErrorStatisticsResult error_statistics = ErrorStatisticsResult.Empty;
-                    int cb = 0;
-                    int pt = 0;
-                    int n300 = 0;
-                    int n100 = 0;
-                    int n50 = 0;
-                    int ngeki = 0;
-                    int nkatu = 0;
-                    int nmiss = 0;
-                    int score = 0;
-                    double hp = 0.0;
-                    double acc = 0.0;
-                    string playername = Setting.Username;
+                    if (OnPlayingTimeChanged != null && m_play_finder != null) pt = m_play_finder.GetPlayingTime();
+                    if (OnBeatmapChanged != null && m_beatmap_finder != null) beatmap = m_beatmap_finder.GetCurrentBeatmap(m_osu_id);
 
-                    try
+                    if (status != OsuStatus.Playing && OnModsChanged != null && m_play_finder != null)
+                        mods = m_play_finder.GetCurrentModsAtListening();
+
+                    if (beatmap != Beatmap.Empty && beatmap != m_last_beatmap && beatmap != null)
                     {
-                        if (OnPlayingTimeChanged != null) pt = m_play_finder.GetPlayingTime();
-                        if (OnBeatmapChanged != null) beatmap = m_beatmap_finder.GetCurrentBeatmap(m_osu_id);
-                        if (Setting.EnableModsChangedAtListening && status != OsuStatus.Playing)
-                            if (OnModsChanged != null) mods = m_play_finder.GetCurrentModsAtListening();
-
-                        if (beatmap != Beatmap.Empty && beatmap != m_last_beatmap)
-                        {
-                            OnBeatmapChanged?.Invoke(beatmap);
-                        }
-
-                        if (status == OsuStatus.Playing)
-                        {
-                            if (OnErrorStatisticsChanged != null) error_statistics = m_play_finder.GetUnstableRate();
-                            if (OnModsChanged != null) mods = m_play_finder.GetCurrentMods();
-                            if (OnComboChanged != null) cb = m_play_finder.GetCurrentCombo();
-                            if (OnCount300Changed != null) n300 = m_play_finder.Get300Count();
-                            if (OnCount100Changed != null) n100 = m_play_finder.Get100Count();
-                            if (OnCount50Changed != null) n50 = m_play_finder.Get50Count();
-                            if (OnCountGekiChanged != null) ngeki = m_play_finder.GetGekiCount();
-                            if (OnCountKatuChanged != null) nkatu = m_play_finder.GetKatuCount();
-                            if (OnCountMissChanged != null) nmiss = m_play_finder.GetMissCount();
-                            if (OnAccuracyChanged != null) acc = m_play_finder.GetCurrentAccuracy();
-                            if (OnHealthPointChanged != null) hp = m_play_finder.GetCurrentHP();
-                            if (OnScoreChanged != null) score = m_play_finder.GetCurrentScore();
-                            if (OnPlayerChanged != null) playername = m_play_finder.GetCurrentPlayerName();
-                        }
-
-                        if (status != m_last_osu_status)
-                            OnStatusChanged?.Invoke(m_last_osu_status, status);
-
-                        if (mods != ModsInfo.Empty && !ModsInfo.VaildMods(mods))
-                            mods = m_last_mods;
-
-                        if (mods != m_last_mods)
-                            OnModsChanged?.Invoke(mods);
-
-                        if (hp != m_last_hp)
-                            OnHealthPointChanged?.Invoke(hp);
-
-                        if (acc != m_last_acc)
-                            OnAccuracyChanged?.Invoke(acc);
-
-                        if (!error_statistics.Equals(m_last_error_statistics))
-                            OnErrorStatisticsChanged?.Invoke(error_statistics);
-
-                        if (playername != m_last_playername)
-                            OnPlayerChanged(playername);
-
-                        if (score != m_last_score)
-                            OnScoreChanged?.Invoke(score);
-
-                        if (n300 != m_last_300)
-                            OnCount300Changed?.Invoke(n300);
-
-                        if (n100 != m_last_100)
-                            OnCount100Changed?.Invoke(n100);
-
-                        if (n50 != m_last_50)
-                            OnCount50Changed?.Invoke(n50);
-
-                        if (ngeki != m_last_geki)
-                            OnCountGekiChanged?.Invoke(ngeki);
-
-                        if (nkatu != m_last_katu)
-                            OnCountKatuChanged?.Invoke(nkatu);
-
-                        if (nmiss != m_last_miss)
-                            OnCountMissChanged?.Invoke(nmiss);
-
-                        if (cb != m_last_combo)
-                            OnComboChanged?.Invoke(cb);
-
-                        if (pt != m_playing_time)
-                            OnPlayingTimeChanged?.Invoke(pt);
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e.ToString());
+                        OnBeatmapChanged?.Invoke(beatmap);
                     }
 
-                    m_last_beatmap = beatmap;
-                    m_last_mods = mods;
-                    m_last_hp = hp;
-                    m_last_acc = acc;
-                    m_last_error_statistics = error_statistics;
-                    m_last_combo = cb;
-                    m_playing_time = pt;
-                    m_last_300 = n300;
-                    m_last_100 = n100;
-                    m_last_50 = n50;
-                    m_last_geki = ngeki;
-                    m_last_katu = nkatu;
-                    m_last_miss = nmiss;
-                    m_last_score = score;
-                    m_last_osu_status = status;
-                    m_last_playername = playername;
+                    if (status == OsuStatus.Playing && m_play_finder != null)
+                    {
+                        if (OnErrorStatisticsChanged != null) error_statistics = m_play_finder.GetUnstableRate();
+                        if (OnModsChanged != null) mods = m_play_finder.GetCurrentMods();
+                        if (OnComboChanged != null) cb = m_play_finder.GetCurrentCombo();
+                        if (OnCount300Changed != null) n300 = m_play_finder.Get300Count();
+                        if (OnCount100Changed != null) n100 = m_play_finder.Get100Count();
+                        if (OnCount50Changed != null) n50 = m_play_finder.Get50Count();
+                        if (OnCountGekiChanged != null) ngeki = m_play_finder.GetGekiCount();
+                        if (OnCountKatuChanged != null) nkatu = m_play_finder.GetKatuCount();
+                        if (OnCountMissChanged != null) nmiss = m_play_finder.GetMissCount();
+                        if (OnAccuracyChanged != null) acc = m_play_finder.GetCurrentAccuracy();
+                        if (OnHealthPointChanged != null) hp = m_play_finder.GetCurrentHP();
+                        if (OnScoreChanged != null) score = m_play_finder.GetCurrentScore();
+                        if (OnPlayerChanged != null) playername = m_play_finder.GetCurrentPlayerName();
+                    }
+
+                    if (status != m_last_osu_status)
+                        OnStatusChanged?.Invoke(m_last_osu_status, status);
+
+                    if (mods != ModsInfo.Empty && !ModsInfo.VaildMods(mods))
+                        mods = m_last_mods;
+
+                    if (mods != m_last_mods)
+                        OnModsChanged?.Invoke(mods);
+
+                    if (hp != m_last_hp)
+                        OnHealthPointChanged?.Invoke(hp);
+
+                    if (acc != m_last_acc)
+                        OnAccuracyChanged?.Invoke(acc);
+
+                    if (!error_statistics.Equals(m_last_error_statistics))
+                        OnErrorStatisticsChanged?.Invoke(error_statistics);
+
+                    if (playername != m_last_playername)
+                        OnPlayerChanged(playername);
+
+                    if (score != m_last_score)
+                        OnScoreChanged?.Invoke(score);
+
+                    if (n300 != m_last_300)
+                        OnCount300Changed?.Invoke(n300);
+
+                    if (n100 != m_last_100)
+                        OnCount100Changed?.Invoke(n100);
+
+                    if (n50 != m_last_50)
+                        OnCount50Changed?.Invoke(n50);
+
+                    if (ngeki != m_last_geki)
+                        OnCountGekiChanged?.Invoke(ngeki);
+
+                    if (nkatu != m_last_katu)
+                        OnCountKatuChanged?.Invoke(nkatu);
+
+                    if (nmiss != m_last_miss)
+                        OnCountMissChanged?.Invoke(nmiss);
+
+                    if (cb != m_last_combo)
+                        OnComboChanged?.Invoke(cb);
+
+                    if (pt != m_playing_time)
+                        OnPlayingTimeChanged?.Invoke(pt);
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+
+                m_last_beatmap = beatmap;
+                m_last_mods = mods;
+                m_last_hp = hp;
+                m_last_acc = acc;
+                m_last_error_statistics = error_statistics;
+                m_last_combo = cb;
+                m_playing_time = pt;
+                m_last_300 = n300;
+                m_last_100 = n100;
+                m_last_50 = n50;
+                m_last_geki = ngeki;
+                m_last_katu = nkatu;
+                m_last_miss = nmiss;
+                m_last_score = score;
+                m_last_osu_status = status;
+                m_last_playername = playername;
             }
         }
 
@@ -754,15 +761,15 @@ namespace OsuRTDataProvider.Listen
                 if (m_status_finder == null)
                 {
                     m_status_finder = InitFinder<OsuStatusFinder>(
-                        LANG_INIT_STATUS_FINDER_SUCCESS,
-                        LANG_INIT_STATUS_FINDER_FAILED
+                        "Init StatusFinder Success!",
+                        "Init StatusFinder Failed!"
                         );
                     return OsuStatus.Unkonwn;
                 }
             }
             catch (Win32Exception e)
             {
-                Logger.Error($":{e.Message}");
+                Console.WriteLine($":{e.Message}");
             }
 
             OsuInternalStatus mode = m_status_finder.GetCurrentOsuModes();
@@ -770,7 +777,7 @@ namespace OsuRTDataProvider.Listen
 #if DEBUG
             if (mode != m_last_test)
             {
-                Logger.Info($"Internal Status:{mode}");
+                Console.WriteLine($"Internal Status:{mode}");
             }
             m_last_test = mode;
 #endif

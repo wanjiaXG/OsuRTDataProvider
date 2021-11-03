@@ -119,7 +119,7 @@ namespace OsuRTDataProvider.Memory
 
             if (handle == IntPtr.Zero)
             {
-                Logger.Error($"Error Code:0x{Marshal.GetLastWin32Error():X8}");
+                Console.WriteLine($"Error Code:0x{Marshal.GetLastWin32Error():X8}");
                 return;
             }
 
@@ -132,7 +132,7 @@ namespace OsuRTDataProvider.Memory
 
                 if (!ok)
                 {
-                    Logger.Error($"Error Code:0x{Marshal.GetLastWin32Error():X8}");
+                    Console.WriteLine($"Error Code:0x{Marshal.GetLastWin32Error():X8}");
                     break;
                 }
 
@@ -160,7 +160,7 @@ namespace OsuRTDataProvider.Memory
 
             if(m_memoryRegionList.Count==0)
             {
-                Logger.Error($"Error:List is Empty");
+                Console.WriteLine($"Error:List is Empty");
             }
         }
 
@@ -206,7 +206,7 @@ namespace OsuRTDataProvider.Memory
             }
             catch (Exception ex)
             {
-                Logger.Error($":{ex.Message}");
+                Console.WriteLine($":{ex.Message}");
                 return false;
             }
         }
@@ -285,7 +285,7 @@ namespace OsuRTDataProvider.Memory
             }
             catch (Exception ex)
             {
-                Logger.Error($":{ex.Message}");
+                Console.WriteLine($":{ex.Message}");
                 return IntPtr.Zero;
             }
         }
@@ -320,7 +320,7 @@ namespace OsuRTDataProvider.Memory
 
                 if (size != mem_info_size)
                 {
-                    Logger.Error($"(X64)Error Code:0x{Marshal.GetLastWin32Error():X8}");
+                    Console.WriteLine($"(X64)Error Code:0x{Marshal.GetLastWin32Error():X8}");
                     return false;
                 }
 
@@ -341,7 +341,7 @@ namespace OsuRTDataProvider.Memory
 
                 if (size != mem_info_size)
                 {
-                    Logger.Error($"(X86)Error Code:0x{Marshal.GetLastWin32Error():X8}");
+                    Console.WriteLine($"(X86)Error Code:0x{Marshal.GetLastWin32Error():X8}");
                     return false;
                 }
 

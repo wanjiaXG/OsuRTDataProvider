@@ -38,7 +38,7 @@ namespace OsuRTDataProvider.Memory
             if (osuStatus != OsuStatus.Playing)
             {
                 hasChanged = this.preStatus == OsuStatus.Playing;
-                if (hasChanged) Logger.Debug($"Hit events changed due to osustatus: {OsuStatus.Playing} -> {osuStatus}");
+                if (hasChanged) Console.WriteLine($"Hit events changed due to osustatus: {OsuStatus.Playing} -> {osuStatus}");
 
                 this.preStatus = osuStatus;
                 this.currentPlayType = PlayType.Unknown;
@@ -50,9 +50,9 @@ namespace OsuRTDataProvider.Memory
                 replay.Clear();
                 playing.Clear();
                 if (preStatus != OsuStatus.Playing)
-                    Logger.Debug($"Hit events changed due to osustatus: {preStatus} -> {OsuStatus.Playing}");
+                    Console.WriteLine($"Hit events changed due to osustatus: {preStatus} -> {OsuStatus.Playing}");
                 else
-                    Logger.Debug($"Hit events changed due to playing time: {preTime} -> {playTime}");
+                    Console.WriteLine($"Hit events changed due to playing time: {preTime} -> {playTime}");
                 hasChanged = true;
             }
             this.preStatus = OsuStatus.Playing;

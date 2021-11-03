@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using static OsuRTDataProvider.DefaultLanguage;
 
 namespace OsuRTDataProvider.BeatmapInfo
 {
@@ -14,7 +13,7 @@ namespace OsuRTDataProvider.BeatmapInfo
             get
             {
                 if (BeatmapID != 0) return $"http://osu.ppy.sh/b/{BeatmapID}";
-                return LANG_BEATMAP_NOT_FOUND;
+                return "Beatmap not found";
             }
         }
 
@@ -26,7 +25,7 @@ namespace OsuRTDataProvider.BeatmapInfo
             get
             {
                 if (BeatmapSetID > 0) return $"http://osu.ppy.sh/s/{BeatmapSetID}";
-                return LANG_BEATMAP_NOT_FOUND;
+                return "Beatmap not found";
             }
         }
 

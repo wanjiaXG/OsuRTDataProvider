@@ -43,16 +43,13 @@ namespace OsuRTDataProvider.Memory
 
             SigScan.Reload();
             {
-                if (Setting.EnableModsChangedAtListening)
-                {
-                    //Find mods address
-                    m_mods_address = SigScan.FindPattern(StringToByte(s_global_mods_pattern), s_global_mods_mask, 3);
-                    LogHelper.LogToFile($"Mods Base Address (0):0x{(int)m_mods_address:X8}");
+                //Find mods address
+                m_mods_address = SigScan.FindPattern(StringToByte(s_global_mods_pattern), s_global_mods_mask, 3);
+                LogHelper.LogToFile($"Mods Base Address (0):0x{(int)m_mods_address:X8}");
 
-                    m_mods_address_success = TryReadIntPtrFromMemory(m_mods_address, out m_mods_address);
-                    LogHelper.LogToFile($"Mods Base Address (1):0x{(int)m_mods_address:X8}");
-                }
-                
+                m_mods_address_success = TryReadIntPtrFromMemory(m_mods_address, out m_mods_address);
+                LogHelper.LogToFile($"Mods Base Address (1):0x{(int)m_mods_address:X8}");
+
                 //Find acc Address
                 m_acc_address = SigScan.FindPattern(StringToByte(s_acc_pattern), s_acc_mask, 1);
                 LogHelper.LogToFile($"Playing Accuracy Base Address (0):0x{(int)m_acc_address:X8}");
@@ -80,8 +77,7 @@ namespace OsuRTDataProvider.Memory
             SigScan.ResetRegion();
 
             success = m_time_address_success && m_accuracy_address_success;
-            if(Setting.EnableModsChangedAtListening)
-                 success = success && m_mods_address_success;
+            //success = success && m_mods_address_success;
 
             if (m_acc_address == IntPtr.Zero || m_time_address == IntPtr.Zero)
                 success = false;

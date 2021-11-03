@@ -1,4 +1,5 @@
 ﻿using OsuRTDataProvider.BeatmapInfo;
+using OsuRTDataProvider.Listen;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -40,20 +41,20 @@ namespace OsuRTDataProvider.Memory
 
             //兼容20211014的屙屎（暂时不知道下个版本能否正常使用）
             var cmp_ver20211014 = Utils.ConvertVersionStringToValue("20211014");
-            
-            Logger.Info($"osu!version compatible condition: {Setting.CurrentOsuVersionValue.ToString(CultureInfo.InvariantCulture)} < {cmp_ver20190816} ?");
 
-            if (Setting.CurrentOsuVersionValue < cmp_ver20190816)
+            var currentVersion = Utils.ConvertVersionStringToValue(OsuListenerManager.OsuVersion);
+
+            if (currentVersion < cmp_ver20190816)
             {
-                Logger.Warn("BeatmapAddressOffset and others -= 4 for osu!ver < 20190816");
+                Console.WriteLine("BeatmapAddressOffset and others -= 4 for osu!ver < 20190816");
                 BeatmapAddressOffset -= 4;
                 BeatmapSetAddressOffset -= 4;
                 BeatmapFolderAddressOffset -= 4;
                 BeatmapFileNameAddressOffset -= 4;
             }
-            else if(Setting.CurrentOsuVersionValue >= cmp_ver20211014)
+            else if(currentVersion >= cmp_ver20211014)
             {
-                Logger.Warn("BeatmapFileNameAddressOffset += 4 for osu!ver >= 20211014");
+                Console.WriteLine("BeatmapFileNameAddressOffset += 4 for osu!ver >= 20211014");
                 BeatmapFileNameAddressOffset += 4;
             }
         }
@@ -93,7 +94,7 @@ namespace OsuRTDataProvider.Memory
             {
                 if (!(string.IsNullOrWhiteSpace(filename) || string.IsNullOrWhiteSpace(folder)))
                 {
-                    string folder_full = Path.Combine(Setting.SongsPath, folder);
+                    string folder_full = Path.Combine(OsuListenerManager.SongsPath, folder);
                     string filename_full = Path.Combine(folder_full, filename);
                     using (var fs = File.OpenRead(filename_full))
                     {
@@ -107,19 +108,15 @@ namespace OsuRTDataProvider.Memory
 
                 sb.AppendLine("------------- ORTDP(Exception)--------------- ");
                 sb.AppendLine(e.ToString());
+                sb.AppendLine("--------------ORTDP(Detail)-----------------");
+                sb.AppendLine($"Songs Path:{OsuListenerManager.SongsPath}");
+                sb.AppendLine($"Filename:{filename}");
+                sb.AppendLine($"Folder:{folder}");
+                sb.AppendLine($"BeatmapID:{id}");
+                sb.AppendLine($"BeatmapSetID:{set_id}");
+                sb.AppendLine("--------------------------------------------");
 
-                if (Setting.DebugMode)
-                {
-                    sb.AppendLine("--------------ORTDP(Detail)-----------------");
-                    sb.AppendLine($"Songs Path:{Setting.SongsPath}");
-                    sb.AppendLine($"Filename:{filename}");
-                    sb.AppendLine($"Folder:{folder}");
-                    sb.AppendLine($"BeatmapID:{id}");
-                    sb.AppendLine($"BeatmapSetID:{set_id}");
-                    sb.AppendLine("--------------------------------------------");
-                }
-
-                Logger.Warn(sb.ToString());
+                Console.WriteLine(sb.ToString());
             }
 
             return beatmap;
