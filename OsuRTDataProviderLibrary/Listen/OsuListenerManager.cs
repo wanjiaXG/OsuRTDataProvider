@@ -706,7 +706,7 @@ namespace OsuRTDataProviderLibrary.Listen
                         OnErrorStatisticsChanged?.Invoke(error_statistics);
 
                     if (playername != m_last_playername)
-                        OnPlayerChanged(playername);
+                        OnPlayerChanged?.Invoke(playername);
 
                     if (score != m_last_score)
                         OnScoreChanged?.Invoke(score);
