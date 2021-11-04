@@ -1,6 +1,6 @@
 ﻿namespace OsuRTDataProviderLibrary.Memory
 {
-    internal enum OsuInternalStatus
+    public enum OsuInternalStatus
     {
         Menu,
         Edit,

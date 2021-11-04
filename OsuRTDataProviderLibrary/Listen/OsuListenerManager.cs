@@ -79,6 +79,8 @@ namespace OsuRTDataProviderLibrary.Listen
 
         public delegate void OnHitEventsChangedEvt(PlayType playType, List<HitEvent> hitEvents);
 
+        public delegate void OnOsuInternalStatusChangedEvt(OsuInternalStatus status);
+
         /// <summary>
         /// Available in Playing and Linsten.
         /// If too old beatmap, map.ID = -1.
@@ -171,6 +173,13 @@ namespace OsuRTDataProviderLibrary.Listen
         /// Get play type and hit events in playing.
         /// </summary>
         public event OnHitEventsChangedEvt OnHitEventsChanged;
+
+
+        /// <summary>
+        /// Get osu internal status.
+        /// </summary>
+        public event OnOsuInternalStatusChangedEvt OnOsuInternalStatusChanged;
+
         #endregion Event
 
         private Process m_osu_process;
@@ -551,6 +560,8 @@ namespace OsuRTDataProviderLibrary.Listen
         }
         #endregion
 
+        private OsuInternalStatus OsuInternalStatus = OsuInternalStatus.Unknown;
+
         private void ListenLoopUpdate()
         {
             OsuStatus status = GetCurrentOsuStatus();
@@ -746,11 +757,19 @@ namespace OsuRTDataProviderLibrary.Listen
                 m_last_osu_status = status;
                 m_last_playername = playername;
             }
+
+            if(m_status_finder != null)
+            {
+                OsuInternalStatus internalStatus = m_status_finder.GetCurrentOsuModes();
+                if(internalStatus != OsuInternalStatus)
+                {
+                    OsuInternalStatus = internalStatus;
+                    OnOsuInternalStatusChanged?.Invoke(OsuInternalStatus);
+                }
+            }
         }
 
-#if DEBUG
         private OsuInternalStatus m_last_test = OsuInternalStatus.Menu;
-#endif
         private OsuStatus GetCurrentOsuStatus()
         {
             try
